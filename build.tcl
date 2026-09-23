@@ -12,23 +12,29 @@ puts "== Dispositivo: $family $device, Top: $top_mod =="
 set_device -name $family $device
 
 # Agregar fuentes Verilog
-foreach f [glob -nocomplain src/*.v] {
+foreach f [glob -nocomplain rtl/*.v src/*.v] {
     puts "== Agregando fuente: $f =="
     add_file $f
 }
 
 # Agregar archivo de restricciones fisicas
-if {[file exists top.cst]} {
+if {[file exists constraints/top.cst]} {
+    puts "== Agregando restricciones: constraints/top.cst =="
+    add_file constraints/top.cst
+} elseif {[file exists top.cst]} {
     puts "== Agregando restricciones: top.cst =="
     add_file top.cst
 }
 
 # Agregar restricciones de temporizacion si existen
-if {[file exists top.sdc]} {
+if {[file exists constraints/top.sdc]} {
+    puts "== Agregando timing constraints: constraints/top.sdc =="
+    add_file constraints/top.sdc
+} elseif {[file exists top.sdc]} {
     puts "== Agregando timing constraints: top.sdc =="
     add_file top.sdc
 } else {
-    puts "AVISO: no hay top.sdc detectado."
+    puts "AVISO: no hay archivo .sdc detectado."
 }
 
 # Liberar pines de doble proposito para utilizacion como GPIO

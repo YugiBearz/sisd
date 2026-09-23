@@ -1,13 +1,15 @@
 # ============================================================================
 #  Makefile — Plantilla Base para Sistemas Digitales con FPGA (ITLA)
 #  Tang Primer 25K (GW5A-25 / GW5A-LV25MG121NC1/I0)
+#  Convención oficial del curso: rtl/, tb/, sim/, constraints/, docs/, build/
 #  Autor: Urik Valenzuela · Matricula: 2025-0469 · 20250469@itla.edu.do
 # ============================================================================
 
 TOP       ?= top
-SRC       := $(wildcard src/*.v)
+SRC       := $(wildcard rtl/*.v src/*.v)
 TB        ?= tb/tb_$(TOP).v
 BUILD     := build
+SIM_DIR   := sim
 BOARD     ?= tangprimer25k
 BITSTREAM ?= impl/pnr/$(TOP).fs
 
@@ -22,31 +24,31 @@ help:
 	@echo "Objetivos disponibles en este proyecto:"
 	@echo "  make lint   - Verilator: chequeo estatico de sintaxis (-Wall --lint-only)"
 	@echo "  make sim    - Icarus Verilog: compila y ejecuta el testbench"
-	@echo "  make wave   - GTKWave: abre las formas de onda (build/dump.vcd)"
+	@echo "  make wave   - GTKWave: abre las formas de onda (sim/dump.vcd)"
 	@echo "  make check  - lint + sim: informe consolidado (como en el CI)"
 	@echo "  make synth  - Gowin EDA: genera el bitstream (impl/pnr/$(TOP).fs)"
 	@echo "  make load   - openFPGALoader: carga rapida a la SRAM de la placa"
 	@echo "  make flash  - openFPGALoader: grabacion permanente en la memoria Flash"
-	@echo "  make clean  - Limpia las carpetas temporales build/ e impl/"
+	@echo "  make clean  - Limpia las carpetas temporales build/, impl/ y sim/*.vcd"
 
 $(BUILD):
-	@mkdir -p $(BUILD)
+	@mkdir -p $(BUILD) $(SIM_DIR)
 
 lint:
-	@test -n "$(SRC)" || { echo "ERROR: No hay archivos Verilog en src/"; exit 1; }
+	@test -n "$(SRC)" || { echo "ERROR: No hay archivos Verilog en rtl/ o src/"; exit 1; }
 	$(VERILATOR) --lint-only -Wall --top-module $(TOP) $(SRC)
 
 sim: | $(BUILD)
 	$(IVERILOG) -g2012 -o $(BUILD)/sim.out $(SRC) $(TB)
-	cd $(BUILD) && $(VVP) sim.out
+	$(VVP) $(BUILD)/sim.out
 
 wave: sim
-	$(GTKWAVE) $(BUILD)/dump.vcd &
+	$(GTKWAVE) $(SIM_DIR)/dump.vcd &
 
 check: | $(BUILD)
 	-$(VERILATOR) --lint-only -Wall --top-module $(TOP) $(SRC) 2> $(BUILD)/lint.log
 	-$(IVERILOG) -g2012 -o $(BUILD)/sim.out $(SRC) $(TB) 2>&1 | tee $(BUILD)/sim.log
-	-cd $(BUILD) && $(VVP) sim.out 2>&1 | tee -a sim.log
+	-$(VVP) $(BUILD)/sim.out 2>&1 | tee -a $(BUILD)/sim.log
 	@echo ""
 	@echo "--- resumen de verificacion ---"
 	@echo "casos PASS     : $$(grep -c ': PASS' $(BUILD)/sim.log || true)"
@@ -68,5 +70,4 @@ flash:
 	openFPGALoader -b $(BOARD) -f $(BITSTREAM)
 
 clean:
-	rm -rf $(BUILD) impl
-
+	rm -rf $(BUILD) impl $(SIM_DIR)/*.vcd $(SIM_DIR)/*.vvp $(SIM_DIR)/*.out

@@ -26,8 +26,8 @@ module tb_top;
     integer fail_count = 0;
 
     initial begin
-        // Volcado de formas de onda para GTKWave
-        $dumpfile("dump.vcd");
+        // Volcado de formas de onda para GTKWave (carpeta sim/)
+        $dumpfile("sim/dump.vcd");
         $dumpvars(0, tb_top);
 
         $display("== Inicio de Simulacion: Plantilla Base 2025-0469 ==");
