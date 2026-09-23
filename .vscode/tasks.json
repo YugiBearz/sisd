@@ -1,0 +1,78 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Verilog: Lint",
+      "type": "shell",
+      "command": "make lint",
+      "group": "build",
+      "problemMatcher": {
+        "owner": "verilog",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^%(Error|Warning)(?:-[A-Z0-9_]+)?:\\s+(.+):(\\d+):(?:(\\d+):)?\\s+(.*)$",
+          "severity": 1,
+          "file": 2,
+          "line": 3,
+          "column": 4,
+          "message": 5
+        }
+      }
+    },
+    {
+      "label": "Verilog: Simulate",
+      "type": "shell",
+      "command": "make sim",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Verilog: View Waveform (GTKWave)",
+      "type": "shell",
+      "command": "make wave",
+      "problemMatcher": []
+    },
+    {
+      "label": "Verilog: Full Check (CI Benchmark)",
+      "type": "shell",
+      "command": "make check",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": {
+        "owner": "verilog",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^%(Error|Warning)(?:-[A-Z0-9_]+)?:\\s+(.+):(\\d+):(?:(\\d+):)?\\s+(.*)$",
+          "severity": 1,
+          "file": 2,
+          "line": 3,
+          "column": 4,
+          "message": 5
+        }
+      }
+    },
+    {
+      "label": "Gowin: Synthesize Bitstream",
+      "type": "shell",
+      "command": "make synth",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "FPGA: Grabar en Placa (SRAM)",
+      "type": "shell",
+      "command": "make load",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "FPGA: Grabar Permanente (Flash)",
+      "type": "shell",
+      "command": "make flash",
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}

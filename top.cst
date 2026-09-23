@@ -1,0 +1,18 @@
+// ============================================================================
+//  Restricciones Fisicas (.cst) — Tang Primer 25K (GW5A-LV25MG121NC1/I0)
+//  Autor: Urik Valenzuela · Matricula: 2025-0469 · 20250469@itla.edu.do
+//  Sistemas Digitales con FPGA · ITLA
+// ============================================================================
+
+// Reloj de 50 MHz integrado en la placa Tang Primer 25K
+IO_LOC  "clk" E2;
+IO_PORT "clk" PULL_MODE=NONE DRIVE=OFF;
+
+// Boton S1 de la placa base (con pull-down interno: 0 en reposo, 1 al presionar)
+IO_LOC  "rst_n" H11;
+IO_PORT "rst_n" PULL_MODE=DOWN DRIVE=OFF;
+
+// Salida LED (ejemplo asignado al pin G11)
+IO_LOC  "led" G11;
+IO_PORT "led" PULL_MODE=NONE DRIVE=8;
+

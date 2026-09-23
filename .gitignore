@@ -1,0 +1,10 @@
+# Archivos generados por simuladores y Gowin EDA
+build/
+impl/
+*.vcd
+*.vvp
+*.log
+*.fs
+*.rpt
+*.bin
+.DS_Store
