@@ -47,7 +47,7 @@ module i2c_master #(
 
     wire phase_tick = (clk_cnt == QP[15:0]);
 
-    always @(posedge clk) begin
+        always @(posedge clk) begin
         if (rst) begin
             state    <= S_IDLE;
             clk_cnt  <= 16'd0;
@@ -61,6 +61,117 @@ module i2c_master #(
             o_done   <= 1'b0;
         end else begin
             o_done <= 1'b0;
+
+            case (state)
+                // Reposo: espera comando de START, transmision de byte o STOP
+                S_IDLE: begin
+                    o_busy <= 1'b0;
+                    if (i_start) begin
+                        state   <= S_START;
+                        o_busy  <= 1'b1;
+                        clk_cnt <= 16'd0;
+                        phase   <= 2'd0;
+                    end else if (i_write) begin
+                        state    <= S_WRITE_BIT;
+                        o_busy   <= 1'b1;
+                        data_reg <= i_data;
+                        bit_cnt  <= 3'd0;
+                        clk_cnt  <= 16'd0;
+                        phase    <= 2'd0;
+                    end else if (i_stop) begin
+                        state   <= S_STOP;
+                        o_busy  <= 1'b1;
+                        clk_cnt <= 16'd0;
+                        phase   <= 2'd0;
+                    end
+                end
+
+                // Generacion de condicion START: SDA cae mientras SCL permanece alto
+                S_START: begin
+                    if (phase_tick) begin
+                        clk_cnt <= 16'd0;
+                        phase   <= phase + 1'b1;
+                        case (phase)
+                            2'd0: begin sda_oe <= 1'b0; scl_oe <= 1'b0; end
+                            2'd1: begin sda_oe <= 1'b1; end
+                            2'd2: begin scl_oe <= 1'b1; end
+                            2'd3: begin
+                                state  <= S_IDLE;
+                                o_done <= 1'b1;
+                            end
+                        endcase
+                    end else begin
+                        clk_cnt <= clk_cnt + 1'b1;
+                    end
+                end
+
+                // Escritura de byte: transmision serial de 8 bits (MSB primero)
+                S_WRITE_BIT: begin
+                    if (phase_tick) begin
+                        clk_cnt <= 16'd0;
+                        phase   <= phase + 1'b1;
+                        case (phase)
+                            2'd0: begin sda_oe <= ~data_reg[7]; scl_oe <= 1'b1; end
+                            2'd1: begin scl_oe <= 1'b0; end
+                            2'd2: begin end
+                            2'd3: begin
+                                scl_oe   <= 1'b1;
+                                data_reg <= {data_reg[6:0], 1'b0};
+                                if (bit_cnt == 3'd7) begin
+                                    state   <= S_READ_ACK;
+                                    bit_cnt <= 3'd0;
+                                    phase   <= 2'd0;
+                                end else begin
+                                    bit_cnt <= bit_cnt + 1'b1;
+                                end
+                            end
+                        endcase
+                    end else begin
+                        clk_cnt <= clk_cnt + 1'b1;
+                    end
+                end
+
+                // Lectura de bit ACK: el esclavo responde llevando SDA a bajo
+                S_READ_ACK: begin
+                    if (phase_tick) begin
+                        clk_cnt <= 16'd0;
+                        phase   <= phase + 1'b1;
+                        case (phase)
+                            2'd0: begin sda_oe <= 1'b0; scl_oe <= 1'b1; end
+                            2'd1: begin scl_oe <= 1'b0; end
+                            2'd2: begin o_ack <= sda_i; end
+                            2'd3: begin
+                                scl_oe <= 1'b1;
+                                state  <= S_IDLE;
+                                o_done <= 1'b1;
+                            end
+                        endcase
+                    end else begin
+                        clk_cnt <= clk_cnt + 1'b1;
+                    end
+                end
+
+                // Generacion de condicion STOP: SDA sube mientras SCL permanece alto
+                S_STOP: begin
+                    if (phase_tick) begin
+                        clk_cnt <= 16'd0;
+                        phase   <= phase + 1'b1;
+                        case (phase)
+                            2'd0: begin sda_oe <= 1'b1; scl_oe <= 1'b1; end
+                            2'd1: begin scl_oe <= 1'b0; end
+                            2'd2: begin sda_oe <= 1'b0; end
+                            2'd3: begin
+                                state  <= S_IDLE;
+                                o_done <= 1'b1;
+                            end
+                        endcase
+                    end else begin
+                        clk_cnt <= clk_cnt + 1'b1;
+                    end
+                end
+
+                default: state <= S_IDLE;
+            endcase
         end
     end
 
