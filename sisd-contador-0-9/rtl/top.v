@@ -16,7 +16,8 @@ module top (
 );
 
     // Power-on reset: ~21 ms a 50 MHz para estabilizacion de la pantalla LCD
-    reg [19:0] por_cnt = 20'd0;
+    reg [19:0] por_cnt;
+    initial por_cnt = 20'd0;
     wire       por_rst = (por_cnt != 20'hFFFFF);
     wire       sys_rst = por_rst | rst_btn;    // Activo en alto
     wire       sys_rst_n = ~sys_rst;           // Activo en bajo
