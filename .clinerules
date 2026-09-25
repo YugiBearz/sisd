@@ -1,0 +1,42 @@
+# SYSTEM PROMPT & REGLAS DE DESARROLLO VERILOG (ITLA)
+# Estudiante: Urik Valenzuela · Matrícula: 2025-0469 · 20250469@itla.edu.do
+# Asignatura: Sistemas Digitales con FPGA · ITLA
+# Placa: Sipeed Tang Primer 25K (Chip Gowin GW5A-LV25MG121NC1/I0)
+
+## 1. PROTOCOLO OBLIGATORIO: ANALYZE, ASK AND PROCEED
+- PASO 1 (ANALYZE): Analizar el problema, la lógica y los archivos de forma pasiva (solo lectura).
+- PASO 2 (ASK): Antes de ejecutar CUALQUIER comando o escribir/modificar CUALQUIER archivo en el disco, detallar exactamente qué se planea hacer, mostrar el código o comando propuesto, y DETENERSE a pedir confirmación explícita al usuario.
+- PASO 3 (PROCEED): Solo ejecutar y aplicar los cambios tras recibir la autorización explícita del usuario ("Sí", "Hazlo", "Procede").
+
+## 2. LÍNEAS ROJAS Y REGLAS DE HARDWARE (PENALIZACIONES SEVERAS DEL CI)
+1. CERO RELOJES DERIVADOS (-10 pts):
+   - Jamás usar la salida de un contador o flip-flop como señal de reloj en `always @(posedge ...)`.
+   - Todo el diseño debe usar el mismo reloj maestro de 50 MHz (`clk` en pin `E2`).
+   - Los ritmos lentos se logran exclusivamente con pulsos Clock Enable (`tick`) de 1 ciclo evaluados con `if (tick)`.
+2. CERO LATCHES INFERIDOS:
+   - Bloques combinacionales `always @*` con cobertura exhaustiva: `default` obligatorio en `case`, `else` en `if`.
+3. SINCRONIZACIÓN DE ENTRADAS ASÍNCRONAS:
+   - Toda señal física externa (botones, switches, pines GPIO) debe pasar obligatoriamente por un sincronizador de dos flip-flops (`sync2ff`) antes de entrar a lógica secuencial o FSMs para prevenir metaestabilidad.
+4. SEPARACIÓN ESTRICTA DE ASIGNACIONES:
+   - Bloques secuenciales `always @(posedge clk)` -> Únicamente asignaciones no bloqueantes (`<=`).
+   - Bloques combinacionales `always @*` -> Únicamente asignaciones bloqueantes (`=`).
+   - Prohibido mezclar `=` y `<=` dentro del mismo bloque.
+5. CERO DELAYS (`#`) EN RTL:
+   - Delays temporales (`#10`, etc.) están prohibidos en código sintetizable (`rtl/`). Solo permitidos en testbenches (`tb/`).
+6. VERILOG 2005 ESTRICTO:
+   - Prohibido sintaxis de SystemVerilog (`always_ff`, `always_comb`, `logic`, `enum`).
+7. MODULARIDAD Y ESTILO:
+   - Un módulo por archivo, con el nombre del archivo igual al nombre del módulo.
+   - Sin constantes mágicas: usar siempre `parameter` o `localparam`.
+   - FSMs divididas en 3 bloques: registro de estado, próximo estado, lógica de salida.
+
+## 3. ESTRUCTURA OFICIAL DEL PROYECTO
+- rtl/ : Código Verilog sintetizable (.v)
+- tb/ : Testbenches auto-verificables con $dumpfile("sim/dump.vcd")
+- sim/ : Salidas de simulación (.vcd, logs)
+- constraints/ : Restricciones físicas (top.cst)
+- docs/ : Documentación
+- build/ : Temporales y bitstreams
+- Makefile : lint, sim, wave, check, synth, load, flash, clean
+- build.tcl : Script headless de Gowin EDA
+- AI_LOG.md : Bitácora obligatoria de transparencia de IA
