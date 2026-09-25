@@ -38,4 +38,4 @@ module tb_sync2ff;
         $finish;
     end
 
-endmodule;
+endmodule

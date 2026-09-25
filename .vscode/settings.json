@@ -1,3 +1,5 @@
 {
-    "verilog.linting.verilator.arguments": "-Irtl"
+    "verilog.linting.verilator.includePath": [
+        "rtl"
+    ]
 }
