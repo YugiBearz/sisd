@@ -11,6 +11,7 @@
 | Fecha | Herramienta | Prompt / Consulta Realizada | Resumen de la Respuesta y Acción Tomada | Verificación / Validación Humana |
 | :--- | :--- | :--- | :--- | :--- |
 | 2026-09-22 | Antigravity AI | "Create an empty project folder outside 2025-0469 as base template" | Generación de la plantilla base con Makefile, tasks.json, CST y Verilog 2005. | Verificación de estructura y ejecución de make check. |
+| 2026-09-25 | Antigravity AI | "Activa el modo de desarrollo para la asignatura... Crear un contador del 0 al 9" | Inicialización del proyecto Asignación #2 en sisd-contador-0-9 y generación de directrices .clinerules con protocolo Analyze, Ask and Proceed. | Revisión humana del archivo .clinerules en VSCodium y creación del commit correspondiente. |
 
 ---
 
