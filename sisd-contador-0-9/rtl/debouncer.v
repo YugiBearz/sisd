@@ -5,7 +5,7 @@
 // Asignatura: Sistemas Digitales
 // ==========================================================================
 
-module debounder #(
+module debouncer #(
     parameter CLK_HZ        = 50_000_000,
     parameter DEBOUNCE_MS   = 20   
 )(
