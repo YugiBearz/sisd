@@ -1,0 +1,2 @@
+0000000000000000000000000000000000000000 f6107b7660afb68adf5a99347a605a1584f2991f Urik Valenzuela <20250469@itla.edu.do> 1789860349 -0400	commit (initial): chore: inicio del repositorio CC1 con estructura y Makefile
+f6107b7660afb68adf5a99347a605a1584f2991f 0f90ecd32605e40fb2bd72205018beec6d3da1b9 Urik Valenzuela <20250469@itla.edu.do> 1789860689 -0400	commit: feat: implementacion y verificacion del holaMundo (5 PASS, 0 fallos)

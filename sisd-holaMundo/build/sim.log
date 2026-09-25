@@ -1,0 +1,10 @@
+VCD info: dumpfile dump.vcd opened for output.
+== Hola mundo 2025-0469 — Tang Primer 25K ==
+[L1] caso 1: PASS  en reposo (btn_raw=1) el LED esta apagado
+[L1] caso 2: PASS  pulsado (btn_raw=0) el LED se enciende
+[L1] caso 3: PASS  al soltar vuelve a apagarse, no se engancha
+[L1] caso 4: PASS  BUTTON_ACTIVE_LOW=0 invierte la lectura del boton
+[L1] caso 5: PASS  LED_ACTIVE_LOW=1 invierte la salida hacia el pin
+== fallos: 0 ==
+== el toolchain funciona de punta a punta ==
+tb/tb_top.v:75: $finish called at 50000 (1ps)

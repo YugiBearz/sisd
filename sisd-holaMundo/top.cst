@@ -1,0 +1,32 @@
+//Copyright (C)2014-2023 Gowin Semiconductor Corporation.
+//All rights reserved.
+//File Title: Physical Constraints file
+//GOWIN Version: V1.9.9 Beta-5
+//Part Number: GW5A-LV25MG121NES
+//Device: GW5A-25
+//Device Version: A
+
+// ---------------------------------------------------------------------------
+// Hola mundo: solo los dos pines que declara el modulo top.
+//
+// Una restriccion solo puede apuntar a un puerto que exista en el diseno. Si
+// dejas aqui los pines del display, los LEDs o los interruptores, Gowin avisa
+// de que no encuentra esos puertos y el informe se llena de ruido que tapa
+// los avisos que si importan.
+//
+// El mapa completo de la placa esta en referencia/placa_completa.cst. Cuando
+// tu diseno declare mas puertos, copia de ahi solo las lineas que necesites.
+//
+// Cuidado con los duplicados del archivo general: btn_raw comparte el pin F5
+// con i_button[0], y led comparte G11 con o_led[0]. Son el mismo boton y el
+// mismo LED con dos nombres. Nunca actives los dos pares a la vez: dos
+// puertos sobre el mismo balon aborta el place & route.
+// ---------------------------------------------------------------------------
+
+// Boton S1 de la placa Dock. Pull-up externo en la placa: en reposo lee 1.
+IO_LOC  "btn_raw" F5;
+IO_PORT "btn_raw" PULL_MODE=NONE DRIVE=OFF;
+
+// Primer LED de la fila de 8.
+IO_LOC  "led" G11;
+IO_PORT "led" PULL_MODE=NONE DRIVE=8;
