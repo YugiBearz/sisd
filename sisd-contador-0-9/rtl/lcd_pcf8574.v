@@ -86,7 +86,8 @@ module lcd_pcf8574 #(
     wire [7:0] pcf_byte_en_lo = {cur_nib, 1'b1, 1'b0, 1'b0, rs_lat};
     wire [7:0] addr_byte      = {I2C_ADDR, 1'b0};
 
-    always @(posedge clk) begin
+
+        always @(posedge clk) begin
         if (rst) begin
             state     <= S_IDLE;
             step      <= 4'd0;
@@ -107,6 +108,88 @@ module lcd_pcf8574 #(
             i2c_start <= 1'b0;
             i2c_stop  <= 1'b0;
             i2c_write <= 1'b0;
+
+            case (state)
+                S_IDLE: begin
+                    o_busy <= 1'b0;
+                    if (i_start) begin
+                        state     <= S_EXEC;
+                        o_busy    <= 1'b1;
+                        lo_nib    <= i_data[3:0];
+                        rs_lat    <= i_rs;
+                        nib_mode  <= i_nibble_mode;
+                        nib_phase <= 1'b0;
+                        cur_nib   <= i_data[7:4];
+                        step      <= STEP_START1;
+                    end
+                end
+
+                S_EXEC: begin
+                    case (step)
+                        STEP_START1, STEP_START2: begin
+                            i2c_start <= 1'b1;
+                            state     <= S_WAIT;
+                        end
+                        STEP_ADDR1, STEP_ADDR2: begin
+                            i2c_write <= 1'b1;
+                            i2c_wdata <= addr_byte;
+                            state     <= S_WAIT;
+                        end
+                        STEP_DATA_HI: begin
+                            i2c_write <= 1'b1;
+                            i2c_wdata <= pcf_byte_en_hi;
+                            state     <= S_WAIT;
+                        end
+                        STEP_DATA_LO: begin
+                            i2c_write <= 1'b1;
+                            i2c_wdata <= pcf_byte_en_lo;
+                            state     <= S_WAIT;
+                        end
+                        STEP_STOP1, STEP_STOP2: begin
+                            i2c_stop <= 1'b1;
+                            state    <= S_WAIT;
+                        end
+                        STEP_EN_WAIT: begin
+                            delay_cnt <= 8'd0;
+                            state     <= S_DELAY;
+                        end
+                        STEP_NEXT: begin
+                            if (nib_mode || nib_phase) begin
+                                step  <= STEP_DONE;
+                                state <= S_EXEC;
+                            end else begin
+                                nib_phase <= 1'b1;
+                                cur_nib   <= lo_nib;
+                                step      <= STEP_START1;
+                                state     <= S_EXEC;
+                            end
+                        end
+                        STEP_DONE: begin
+                            o_done <= 1'b1;
+                            state  <= S_IDLE;
+                        end
+                        default: state <= S_IDLE;
+                    endcase
+                end
+
+                S_WAIT: begin
+                    if (i2c_done) begin
+                        step  <= step + 1'b1;
+                        state <= S_EXEC;
+                    end
+                end
+
+                S_DELAY: begin
+                    if (delay_cnt == EN_DELAY - 1) begin
+                        step  <= step + 1'b1;
+                        state <= S_EXEC;
+                    end else begin
+                        delay_cnt <= delay_cnt + 1'b1;
+                    end
+                end
+
+                default: state <= S_IDLE;
+            endcase
         end
     end
 
