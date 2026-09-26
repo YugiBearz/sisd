@@ -19,6 +19,7 @@
 | 2026-09-25 | Antigravity AI | "Controlador de pantalla y formateador de texto LCD 1602" | Implementación de `lcd_controller.v`: inicialización HD44780 en 4 bits, generación dinámica de mensajes (Línea 1) y dígito centrado (Línea 2). | Verificación de cobertura en multiplexor combinacional y FSM de refresco. |
 | 2026-09-25 | Antigravity AI | "Integración Top-Level, Restricciones CST y Testbench Integral" | Integración en `top.v` con POR (~21 ms), asignación física en `constraints/top.cst` y creación de `tb/tb_top.v` con 12 casos de prueba. | Ejecución de `make check`: 12 casos PASS, 0 fallos, 0 avisos de linting en Verilator e Icarus Verilog. |
 | 2026-09-25 | Antigravity AI | "Resolución de advertencias de linter en tb_top.v y configuración VSCodium" | Se agregaron directivas condicionales `VERILATOR` en los bancos de pruebas para resolución jerárquica autónoma sin duplicación en Icarus Verilog, y se configuró `.vscode/settings.json`. | Verificación en VSCodium y CLI: 0 errores, 0 avisos, 12 casos PASS en Asignación #2 y 5 casos PASS en Asignación #1. |
+| 2026-09-25 | Antigravity AI | "Actualización de README.md en asignaciones y creación del README.md raíz" | Redacción técnica exhaustiva de los README.md para las Asignaciones #1 y #2, eliminación de referencias a plantillas y creación del README.md principal del repositorio `sisd-2025-0469`. | Revisión de estructura, verificación de comandos `make check` y confirmación de estándares académicos. |
 
 ---
 
