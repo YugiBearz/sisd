@@ -1,5 +1,5 @@
 # ============================================================================
-#  Makefile — Plantilla Base para Sistemas Digitales con FPGA (ITLA)
+#  Makefile — Asignacion #2: Contador Reversible 0-9 con LCD 1602 (ITLA)
 #  Tang Primer 25K (GW5A-25 / GW5A-LV25MG121NC1/I0)
 #  Convención oficial del curso: rtl/, tb/, sim/, constraints/, docs/, build/
 #  Autor: Urik Valenzuela · Matricula: 2025-0469 · 20250469@itla.edu.do
