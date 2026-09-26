@@ -110,6 +110,37 @@ module tb_top;
             fail_count = fail_count + 1;
         end
 
+                // Caso 2: Conteo Ascendente de 0 a 3
+        send_tick(); // 1
+        send_tick(); // 2
+        send_tick(); // 3
+        if (dut.count === 4'd3) begin
+            $display("[L1] caso 2: PASS - Conteo ascendente avanza a 3 con pulsos tick_1hz");
+            pass_count = pass_count + 1;
+        end else begin
+            $display("[L1] caso 2: FAIL - Conteo no avanzo correctamente (count=%0d)", dut.count);
+            fail_count = fail_count + 1;
+        end
+
+        // Caso 3: Conteo ascendente hasta 9
+        repeat (6) send_tick(); // 4, 5, 6, 7, 8, 9
+        if (dut.count === 4'd9) begin
+            $display("[L1] caso 3: PASS - Conteo ascendente llega a 9 exitosamente");
+            pass_count = pass_count + 1;
+        end else begin
+            $display("[L1] caso 3: FAIL - Conteo no llego a 9 (count=%0d)", dut.count);
+            fail_count = fail_count + 1;
+        end
+
+        // Caso 4: Deteccion de Fin de Conteo Ascendente (is_done)
+        send_tick(); // Tick con count=9
+        if (dut.is_done === 1'b1 && dut.count === 4'd9) begin
+            $display("[L1] caso 4: PASS - Bandera is_done activada y conteo retenido en 9");
+            pass_count = pass_count + 1;
+        end else begin
+            $display("[L1] caso 4: FAIL - is_done no se activo tras llegar a 9");
+            fail_count = fail_count + 1;
+        end
 
         #200;
         $finish;
