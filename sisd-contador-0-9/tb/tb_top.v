@@ -142,6 +142,47 @@ module tb_top;
             fail_count = fail_count + 1;
         end
 
+                // Caso 5: Cambio de Modo a Descendente (debe preservar count=9 y limpiar is_done)
+        press_mode();
+        if (dut.mode_up === 1'b0 && dut.count === 4'd9 && dut.is_done === 1'b0) begin
+            $display("[L1] caso 5: PASS - Modo cambio a Descendente preservando conteo en 9");
+            pass_count = pass_count + 1;
+        end else begin
+            $display("[L1] caso 5: FAIL - Error al alternar modo");
+            fail_count = fail_count + 1;
+        end
+
+        // Caso 6: Conteo Descendente de 9 hacia 7
+        send_tick(); // 8
+        send_tick(); // 7
+        if (dut.count === 4'd7) begin
+            $display("[L1] caso 6: PASS - Conteo descendente decrementa correctamente a 7");
+            pass_count = pass_count + 1;
+        end else begin
+            $display("[L1] caso 6: FAIL - Conteo descendente incorrecto (count=%0d)", dut.count);
+            fail_count = fail_count + 1;
+        end
+
+        // Caso 7: Conteo descendente continuo hasta 0
+        repeat (7) send_tick(); // 6, 5, 4, 3, 2, 1, 0
+        if (dut.count === 4'd0) begin
+            $display("[L1] caso 7: PASS - Conteo descendente llega a 0 exitosamente");
+            pass_count = pass_count + 1;
+        end else begin
+            $display("[L1] caso 7: FAIL - Conteo no llego a 0 (count=%0d)", dut.count);
+            fail_count = fail_count + 1;
+        end
+
+        // Caso 8: Deteccion de Fin de Conteo Descendente (is_done)
+        send_tick(); // Tick con count=0
+        if (dut.is_done === 1'b1 && dut.count === 4'd0) begin
+            $display("[L1] caso 8: PASS - Bandera is_done activada en modo descendente reteniendo 0");
+            pass_count = pass_count + 1;
+        end else begin
+            $display("[L1] caso 8: FAIL - is_done no se activo tras llegar a 0");
+            fail_count = fail_count + 1;
+        end
+
         #200;
         $finish;
     end
