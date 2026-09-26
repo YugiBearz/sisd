@@ -183,7 +183,60 @@ module tb_top;
             fail_count = fail_count + 1;
         end
 
-        #200;
+                // Caso 9: Reset Condicional en modo descendente (debe reiniciar a 9)
+        press_reset();
+        if (dut.count === 4'd9 && dut.is_done === 1'b0) begin
+            $display("[L1] caso 9: PASS - Reset condicional en modo descendente reinicio a 9");
+            pass_count = pass_count + 1;
+        end else begin
+            $display("[L1] caso 9: FAIL - Reset condicional no puso 9 en modo descendente");
+            fail_count = fail_count + 1;
+        end
+
+        // Caso 10: Reset Condicional en modo ascendente (debe reiniciar a 0)
+        press_mode(); // Cambiar a ascendente
+        press_reset();
+        if (dut.count === 4'd0 && dut.mode_up === 1'b1 && dut.is_done === 1'b0) begin
+            $display("[L1] caso 10: PASS - Reset condicional en modo ascendente reinicio a 0");
+            pass_count = pass_count + 1;
+        end else begin
+            $display("[L1] caso 10: FAIL - Reset condicional no puso 0 en modo ascendente");
+            fail_count = fail_count + 1;
+        end
+
+        // Caso 11: Control ON / OFF (Pausa/Reposo)
+        press_on_off();
+        if (dut.is_on === 1'b0) begin
+            $display("[L1] caso 11: PASS - Boton ON/OFF pone el sistema en reposo (!is_on)");
+            pass_count = pass_count + 1;
+        end else begin
+            $display("[L1] caso 11: FAIL - Boton ON/OFF no apago el sistema");
+            fail_count = fail_count + 1;
+        end
+
+        // Caso 12: Inmunidad a ticks mientras el sistema esta apagado
+        send_tick();
+        if (dut.count === 4'd0) begin
+            $display("[L1] caso 12: PASS - Conteo pausado e inmune a ticks mientras esta apagado");
+            pass_count = pass_count + 1;
+        end else begin
+            $display("[L1] caso 12: FAIL - Conteo avanzo estando apagado");
+            fail_count = fail_count + 1;
+        end
+
+        press_on_off(); // Volver a encender
+
+        // Resumen final de verificacion
+        $display("============================================================");
+        $display("  RESUMEN: %0d CASOS PASS | %0d CASOS FAIL", pass_count, fail_count);
+        if (fail_count == 0) begin
+            $display("  VERIFICACION EXITOSA: TODOS LOS CASOS PASS");
+        end else begin
+            $display("  ERROR: SE DETECTARON FALLOS EN LA SIMULACION");
+        end
+        $display("============================================================");
+
+        #500;
         $finish;
     end
 
