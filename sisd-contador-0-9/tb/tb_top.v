@@ -5,6 +5,17 @@
 //  Asignatura: Sistemas Digitales con FPGA
 // ============================================================================
 
+`ifdef VERILATOR
+`include "../rtl/sync2ff.v"
+`include "../rtl/debouncer.v"
+`include "../rtl/tick_gen.v"
+`include "../rtl/counter_fsm.v"
+`include "../rtl/i2c_master.v"
+`include "../rtl/lcd_pcf8574.v"
+`include "../rtl/lcd_controller.v"
+`include "../rtl/top.v"
+`endif
+
 module tb_top;
 
     reg clk;

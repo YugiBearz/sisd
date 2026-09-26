@@ -13,6 +13,10 @@
 //  Este ejemplo no es un Code Challenge, asi que solo cubre el nivel L1. En
 //  resultados.json veras L2 y L3 en cero: es correcto, no hay nada que medir.
 //
+`ifdef VERILATOR
+`include "../src/top.v"
+`endif
+
 module tb_top;
 
     reg  btn;

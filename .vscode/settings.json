@@ -1,7 +1,8 @@
 {
     "verilog.linting.linter": "verilator",
-    "verilog.linting.verilator.arguments": "-Irtl",
+    "verilog.linting.verilator.arguments": "-Isisd-contador-0-9/rtl -Irtl",
     "verilog.linting.verilator.includePath": [
+        "sisd-contador-0-9/rtl",
         "rtl"
     ]
 }
