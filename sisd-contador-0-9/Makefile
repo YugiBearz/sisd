@@ -11,7 +11,7 @@ TB        ?= tb/tb_$(TOP).v
 BUILD     := build
 SIM_DIR   := sim
 BOARD     ?= tangprimer25k
-BITSTREAM ?= impl/pnr/$(TOP).fs
+BITSTREAM ?= $(or $(firstword $(wildcard impl/pnr/project.fs impl/pnr/$(TOP).fs impl/pnr/*.fs)),impl/pnr/project.fs)
 
 IVERILOG  ?= iverilog
 VVP       ?= vvp

@@ -82,7 +82,7 @@ synth:
 	LD_LIBRARY_PATH="$(GW_LIB):$$LD_LIBRARY_PATH" gw_sh build.tcl
 
 BOARD     ?= tangprimer25k
-BITSTREAM ?= impl/pnr/$(TOP).fs
+BITSTREAM ?= $(or $(firstword $(wildcard impl/pnr/project.fs impl/pnr/$(TOP).fs impl/pnr/*.fs)),impl/pnr/project.fs)
 
 load:
 	openFPGALoader -b $(BOARD) $(BITSTREAM)
