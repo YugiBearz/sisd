@@ -38,6 +38,48 @@ module tb_top;
     integer pass_count = 0;
     integer fail_count = 0;
 
+    // Tareas para simular pulsos de tiempo y botones
+    task send_tick;
+        begin
+            @(negedge clk);
+            force dut.tick_1hz = 1'b1;
+            @(negedge clk);
+            force dut.tick_1hz = 1'b0;
+            release dut.tick_1hz;
+            #20;
+        end
+    endtask
+    task press_on_off;
+        begin
+            @(negedge clk);
+            force dut.btn_on_off_pulse = 1'b1;
+            @(negedge clk);
+            force dut.btn_on_off_pulse = 1'b0;
+            release dut.btn_on_off_pulse;
+            #20;
+        end
+    endtask
+    task press_mode;
+        begin
+            @(negedge clk);
+            force dut.btn_mode_pulse = 1'b1;
+            @(negedge clk);
+            force dut.btn_mode_pulse = 1'b0;
+            release dut.btn_mode_pulse;
+            #20;
+        end
+    endtask
+    task press_reset;
+        begin
+            @(negedge clk);
+            force dut.btn_reset_pulse = 1'b1;
+            @(negedge clk);
+            force dut.btn_reset_pulse = 1'b0;
+            release dut.btn_reset_pulse;
+            #20;
+        end
+    endtask
+
     initial begin
         $dumpfile("sim/dump.vcd");
         $dumpvars(0, tb_top);
@@ -58,6 +100,16 @@ module tb_top;
         force dut.por_cnt = 20'hFFFFF;
         release dut.por_cnt;
         #40;
+
+         // Caso 1: Estado inicial tras Reset y POR
+        if (dut.count === 4'd0 && dut.mode_up === 1'b1 && dut.is_on === 1'b1 && dut.is_done === 1'b0) begin
+            $display("[L1] caso 1: PASS - Estado inicial correcto (count=0, UP, ON, !done)");
+            pass_count = pass_count + 1;
+        end else begin
+            $display("[L1] caso 1: FAIL - Estado inicial incorrecto");
+            fail_count = fail_count + 1;
+        end
+
 
         #200;
         $finish;
