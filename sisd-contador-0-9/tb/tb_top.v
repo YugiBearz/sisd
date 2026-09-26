@@ -2,7 +2,7 @@
 // ============================================================================
 //  Testbench de Verificación Integral — Contador Reversible 0-9 con LCD 1602
 //  Autor: Urik Valenzuela · Matrícula: 2025-0469 · 20250469@itla.edu.do
-//  Asignatura: Sistemas Digitales con FPGA · ITLA
+//  Asignatura: Sistemas Digitales con FPGA
 // ============================================================================
 
 module tb_top;
